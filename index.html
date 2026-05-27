@@ -365,7 +365,12 @@
             <label for="phone">رقم الهاتف</label>
             <input id="phone" inputmode="tel" placeholder="مثال: 37929637" required />
           </div>
+<div class="field">
 
+<label for="email">البريد الإلكتروني</label>
+
+<input id="email" type="email" placeholder="مثال: client@gmail.com" autocomplete="email" />
+</div>
           <div class="field">
             <label for="service">اسم الخدمة</label>
             <select id="service">
@@ -509,6 +514,7 @@
     const saveBtn = $("saveBtn");
     const customerName = $("customerName");
     const phone = $("phone");
+    const email = $("email");
     const service = $("service");
     const customServiceBox = $("customServiceBox");
     const customService = $("customService");
@@ -695,6 +701,7 @@
         id: editId.value || crypto.randomUUID(),
         customerName: customerName.value.trim(),
         phone: phone.value.trim(),
+        email: email.value.trim(),
         service: selectedService,
         duration: duration.value,
         durationUnit: durationUnit.value,
@@ -732,6 +739,7 @@
       editId.value = r.id;
       customerName.value = r.customerName || "";
       phone.value = r.phone || "";
+      email.value = r.email || "";
 
       const known = Array.from(service.options).some(o => o.value === r.service);
       service.value = known ? r.service : "أخرى";
