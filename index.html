@@ -619,8 +619,11 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><b>${escapeHtml(r.customerName || "بدون اسم")}</b><br><span class="muted">${escapeHtml(r.notes || "")}</span></td>
-          <td>${escapeHtml(r.phone)}</td>
-          <td>${escapeHtml(r.service)}</td>
+<td>
+  ${escapeHtml(r.phone)}
+  <br>
+  <span class="muted">${escapeHtml(r.email || "—")}</span>
+</td>          <td>${escapeHtml(r.service)}</td>
           <td>${r.startDate}</td>
           <td>${r.endDate}<br><span class="muted">${leftText}</span></td>
           <td><span class="badge ${st.cls}">${st.icon} ${st.text}</span></td>
@@ -641,6 +644,7 @@
           <h3>${escapeHtml(r.customerName || "بدون اسم")} <span class="badge ${st.cls}">${st.icon} ${st.text}</span></h3>
           <div class="kv">
             <span>الهاتف</span><span>${escapeHtml(r.phone)}</span>
+            <span>البريد الإلكتروني</span><span>${escapeHtml(r.email || "—")}</span>
             <span>الخدمة</span><span>${escapeHtml(r.service)}</span>
             <span>البداية</span><span>${r.startDate}</span>
             <span>النهاية</span><span>${r.endDate} - ${leftText}</span>
