@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ريم للشحن الإلكتروني - سجل الشحن</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111c35;
+      --card2: #16213d;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --line: rgba(255,255,255,.10);
+      --accent: #22c55e;
+      --accent2: #06b6d4;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --input: #0b1224;
+      --shadow: 0 18px 45px rgba(0,0,0,.28);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(34,197,94,.20), transparent 30%),
+        radial-gradient(circle at 80% 0%, rgba(6,182,212,.22), transparent 28%),
+        linear-gradient(160deg, #07111f, #111827 52%, #0f172a);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 18px;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+
+    .hero, .stats, .panel {
+      background: linear-gradient(145deg, rgba(17,28,53,.94), rgba(22,33,61,.88));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      background: linear-gradient(135deg, rgba(34,197,94,.25), rgba(6,182,212,.10));
+      border-radius: 50%;
+      left: -55px;
+      bottom: -75px;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.25);
+      color: #bbf7d0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -.5px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin: 12px 0 0;
+      font-size: 16px;
+      max-width: 640px;
+    }
+
+    .stats {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat {
+      background: rgba(15,23,42,.72);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .stat span { color: var(--muted); font-size: 13px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel { padding: 18px; }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 19px;
+    }
+
+    label {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+      margin: 0 0 7px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--input);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 13px;
+      outline: none;
+      font: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(34,197,94,.7);
+      box-shadow: 0 0 0 3px rgba(34,197,94,.13);
+    }
+
+    textarea { min-height: 72px; resize: vertical; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field { margin-bottom: 12px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button, .file-btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-decoration: none;
+      transition: transform .14s ease, opacity .14s ease, background .14s ease;
+      white-space: nowrap;
+    }
+
+    button:hover, .file-btn:hover { transform: translateY(-1px); }
+    button.secondary { background: #334155; }
+    button.blue { background: linear-gradient(135deg, var(--accent2), #0284c7); }
+    button.warn { background: linear-gradient(135deg, var(--warning), #d97706); }
+    button.danger { background: linear-gradient(135deg, var(--danger), #b91c1c); }
+    button.ghost { background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+    button.small { padding: 8px 10px; border-radius: 11px; font-size: 13px; }
+    button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 160px 145px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(15,23,42,.50);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: right;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      color: #dbeafe;
+      background: rgba(15,23,42,.88);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td { background: rgba(255,255,255,.035); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .active { background: rgba(34,197,94,.14); color: #bbf7d0; border: 1px solid rgba(34,197,94,.30); }
+    .soon { background: rgba(245,158,11,.15); color: #fde68a; border: 1px solid rgba(245,158,11,.35); }
+    .expired { background: rgba(239,68,68,.14); color: #fecaca; border: 1px solid rgba(239,68,68,.35); }
+
+    .muted { color: var(--muted); }
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+
+    .mobile-card {
+      display: none;
+      background: rgba(15,23,42,.70);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .mobile-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 115px 1fr;
+      gap: 5px 10px;
+      color: #cbd5e1;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .kv span:nth-child(odd) { color: var(--muted); }
+
+    .hidden { display: none !important; }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      left: 18px;
+      max-width: 420px;
+      margin: auto;
+      padding: 13px 16px;
+      background: rgba(15,23,42,.94);
+      border: 1px solid rgba(34,197,94,.28);
+      color: #dcfce7;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 50;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      header, .grid { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 12px; }
+      .hero, .panel { padding: 16px; border-radius: 18px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .table-wrap { display: none; }
+      .mobile-list { display: block; }
+      .mobile-card { display: block; }
+      .actions button, .actions .file-btn { flex: 1 1 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <section class="hero">
+        <div class="brand">⚡ ريم للشحن الإلكتروني</div>
+        <h1>سجل الشحن والاشتراكات</h1>
+        <p>أضف أي شخص شحن: رقم الهاتف، اسم الخدمة، المدة، تاريخ البداية والنهاية. يمكنك البحث، معرفة المنتهي، وتصدير البيانات.</p>
+      </section>
+
+      <section class="stats">
+        <div class="stat"><b id="totalCount">0</b><span>كل السجلات</span></div>
+        <div class="stat"><b id="activeCount">0</b><span>نشطة</span></div>
+        <div class="stat"><b id="soonCount">0</b><span>تنتهي قريباً</span></div>
+        <div class="stat"><b id="expiredCount">0</b><span>منتهية</span></div>
+      </section>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2 id="formTitle">إضافة شحن جديد</h2>
+        <form id="chargeForm">
+          <input type="hidden" id="editId" />
+
+          <div class="field">
+            <label for="customerName">اسم الزبون</label>
+            <input id="customerName" placeholder="مثال: أحمد سالم" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label for="phone">رقم الهاتف</label>
+            <input id="phone" inputmode="tel" placeholder="مثال: 37929637" required />
+          </div>
+
+          <div class="field">
+            <label for="service">اسم الخدمة</label>
+            <select id="service">
+              <option>Snapchat Plus</option>
+              <option>Netflix</option>
+              <option>ChatGPT</option>
+              <option>Canva Pro</option>
+              <option>CapCut Pro</option>
+              <option>Shahid VIP</option>
+              <option>IPTV</option>
+              <option>Facebook / Meta</option>
+              <option>Instagram</option>
+              <option>أخرى</option>
+            </select>
+          </div>
+
+          <div class="field hidden" id="customServiceBox">
+            <label for="customService">اكتب اسم الخدمة</label>
+            <input id="customService" placeholder="اسم الخدمة" />
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="duration">المدة</label>
+              <input id="duration" type="number" min="1" value="1" required />
+            </div>
+            <div class="field">
+              <label for="durationUnit">نوع المدة</label>
+              <select id="durationUnit">
+                <option value="days">أيام</option>
+                <option value="weeks">أسابيع</option>
+                <option value="months" selected>أشهر</option>
+                <option value="years">سنوات</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="startDate">تاريخ البداية</label>
+              <input id="startDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="endDate">تاريخ النهاية</label>
+              <input id="endDate" type="date" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="price">السعر</label>
+              <input id="price" type="number" min="0" step="1" placeholder="مثال: 290" />
+            </div>
+            <div class="field">
+              <label for="currency">العملة</label>
+              <select id="currency">
+                <option>MRU</option>
+                <option>USD</option>
+                <option>EUR</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="notes">ملاحظات</label>
+            <textarea id="notes" placeholder="مثال: تم الدفع نقداً / يحتاج تذكير قبل النهاية"></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="saveBtn">💾 حفظ</button>
+            <button type="button" class="secondary" id="resetBtn">↺ مسح</button>
+          </div>
+          <p class="footer-note">
+            ملاحظة: البيانات تُحفظ داخل نفس المتصفح فقط. إذا فتحت الملف في هاتف آخر لن تظهر البيانات إلا إذا صدّرتها ثم استوردتها.
+          </p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>قائمة الشحن</h2>
+
+        <div class="toolbar">
+          <input id="searchInput" placeholder="بحث بالاسم، الرقم، الخدمة..." />
+          <select id="statusFilter">
+            <option value="all">كل الحالات</option>
+            <option value="active">نشطة</option>
+            <option value="soon">تنتهي قريباً</option>
+            <option value="expired">منتهية</option>
+          </select>
+          <select id="sortBy">
+            <option value="endAsc">الأقرب انتهاءً</option>
+            <option value="endDesc">الأبعد انتهاءً</option>
+            <option value="newest">الأحدث إضافة</option>
+            <option value="name">الاسم</option>
+          </select>
+        </div>
+
+        <div class="actions" style="margin-bottom:12px">
+          <button class="blue" type="button" id="exportCsvBtn">⬇️ CSV</button>
+          <button class="blue" type="button" id="exportJsonBtn">⬇️ نسخة احتياطية</button>
+          <label class="file-btn" for="importFile">⬆️ استيراد</label>
+          <input id="importFile" type="file" accept="application/json" class="hidden" />
+          <button class="danger" type="button" id="clearAllBtn">🗑️ حذف الكل</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الزبون</th>
+                <th>الهاتف</th>
+                <th>الخدمة</th>
+                <th>البداية</th>
+                <th>النهاية</th>
+                <th>الحالة</th>
+                <th>السعر</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+
+        <div id="mobileList" class="mobile-list"></div>
+        <div id="emptyState" class="empty hidden">لا توجد سجلات حالياً. أضف أول شحن من النموذج.</div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const storageKey = "reem_charge_records_v1";
+    let records = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+    const $ = (id) => document.getElementById(id);
+
+    const form = $("chargeForm");
+    const editId = $("editId");
+    const formTitle = $("formTitle");
+    const saveBtn = $("saveBtn");
+    const customerName = $("customerName");
+    const phone = $("phone");
+    const service = $("service");
+    const customServiceBox = $("customServiceBox");
+    const customService = $("customService");
+    const duration = $("duration");
+    const durationUnit = $("durationUnit");
+    const startDate = $("startDate");
+    const endDate = $("endDate");
+    const price = $("price");
+    const currency = $("currency");
+    const notes = $("notes");
+    const recordsBody = $("recordsBody");
+    const mobileList = $("mobileList");
+    const emptyState = $("emptyState");
+    const searchInput = $("searchInput");
+    const statusFilter = $("statusFilter");
+    const sortBy = $("sortBy");
+
+    function todayISO() {
+      const d = new Date();
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 10);
+    }
+
+    function addDuration(dateISO, amount, unit) {
+      const d = new Date(dateISO + "T00:00:00");
+      amount = Number(amount || 1);
+      if (unit === "days") d.setDate(d.getDate() + amount);
+      if (unit === "weeks") d.setDate(d.getDate() + amount * 7);
+      if (unit === "months") d.setMonth(d.getMonth() + amount);
+      if (unit === "years") d.setFullYear(d.getFullYear() + amount);
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 10);
+    }
+
+    function daysLeft(endISO) {
+      const today = new Date(todayISO() + "T00:00:00");
+      const end = new Date(endISO + "T00:00:00");
+      return Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function getStatus(record) {
+      const left = daysLeft(record.endDate);
+      if (left < 0) return { key: "expired", text: "منتهية", cls: "expired", icon: "⛔" };
+      if (left <= 3) return { key: "soon", text: "تنتهي قريباً", cls: "soon", icon: "⚠️" };
+      return { key: "active", text: "نشطة", cls: "active", icon: "✅" };
+    }
+
+    function saveRecords() {
+      localStorage.setItem(storageKey, JSON.stringify(records));
+    }
+
+    function toast(message) {
+      const t = $("toast");
+      t.textContent = message;
+      t.style.display = "block";
+      setTimeout(() => { t.style.display = "none"; }, 2200);
+    }
+
+    function normalizePhone(p) {
+      return String(p || "").replace(/[^\d]/g, "");
+    }
+
+    function whatsappLink(record) {
+      let p = normalizePhone(record.phone);
+      if (p.length === 8) p = "222" + p;
+      const msg = `السلام عليكم، نذكركم بأن اشتراك ${record.service} ينتهي بتاريخ ${record.endDate}. ريم للشحن الإلكتروني.`;
+      return `https://wa.me/${p}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function formatPrice(record) {
+      if (!record.price) return "—";
+      return `${Number(record.price).toLocaleString("ar")} ${record.currency || "MRU"}`;
+    }
+
+    function render() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filter = statusFilter.value;
+
+      let list = records.filter(r => {
+        const s = getStatus(r).key;
+        const matchesStatus = filter === "all" || s === filter;
+        const haystack = `${r.customerName} ${r.phone} ${r.service} ${r.notes}`.toLowerCase();
+        return matchesStatus && haystack.includes(q);
+      });
+
+      list.sort((a, b) => {
+        if (sortBy.value === "endAsc") return new Date(a.endDate) - new Date(b.endDate);
+        if (sortBy.value === "endDesc") return new Date(b.endDate) - new Date(a.endDate);
+        if (sortBy.value === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
+        if (sortBy.value === "name") return String(a.customerName || "").localeCompare(String(b.customerName || ""), "ar");
+        return 0;
+      });
+
+      recordsBody.innerHTML = "";
+      mobileList.innerHTML = "";
+
+      list.forEach(r => {
+        const st = getStatus(r);
+        const left = daysLeft(r.endDate);
+        const leftText = left < 0 ? `منذ ${Math.abs(left)} يوم` : `باقي ${left} يوم`;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><b>${escapeHtml(r.customerName || "بدون اسم")}</b><br><span class="muted">${escapeHtml(r.notes || "")}</span></td>
+          <td>${escapeHtml(r.phone)}</td>
+          <td>${escapeHtml(r.service)}</td>
+          <td>${r.startDate}</td>
+          <td>${r.endDate}<br><span class="muted">${leftText}</span></td>
+          <td><span class="badge ${st.cls}">${st.icon} ${st.text}</span></td>
+          <td>${formatPrice(r)}</td>
+          <td>
+            <div class="actions">
+              <button class="small ghost" onclick="editRecord('${r.id}')">تعديل</button>
+              <button class="small blue" onclick="window.open('${whatsappLink(r)}','_blank')">واتساب</button>
+              <button class="small danger" onclick="deleteRecord('${r.id}')">حذف</button>
+            </div>
+          </td>
+        `;
+        recordsBody.appendChild(tr);
+
+        const card = document.createElement("div");
+        card.className = "mobile-card";
+        card.innerHTML = `
+          <h3>${escapeHtml(r.customerName || "بدون اسم")} <span class="badge ${st.cls}">${st.icon} ${st.text}</span></h3>
+          <div class="kv">
+            <span>الهاتف</span><span>${escapeHtml(r.phone)}</span>
+            <span>الخدمة</span><span>${escapeHtml(r.service)}</span>
+            <span>البداية</span><span>${r.startDate}</span>
+            <span>النهاية</span><span>${r.endDate} - ${leftText}</span>
+            <span>السعر</span><span>${formatPrice(r)}</span>
+            <span>ملاحظات</span><span>${escapeHtml(r.notes || "—")}</span>
+          </div>
+          <div class="actions">
+            <button class="small ghost" onclick="editRecord('${r.id}')">تعديل</button>
+            <button class="small blue" onclick="window.open('${whatsappLink(r)}','_blank')">واتساب</button>
+            <button class="small danger" onclick="deleteRecord('${r.id}')">حذف</button>
+          </div>
+        `;
+        mobileList.appendChild(card);
+      });
+
+      emptyState.classList.toggle("hidden", list.length !== 0);
+
+      const total = records.length;
+      const active = records.filter(r => getStatus(r).key === "active").length;
+      const soon = records.filter(r => getStatus(r).key === "soon").length;
+      const expired = records.filter(r => getStatus(r).key === "expired").length;
+
+      $("totalCount").textContent = total;
+      $("activeCount").textContent = active;
+      $("soonCount").textContent = soon;
+      $("expiredCount").textContent = expired;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function resetForm() {
+      form.reset();
+      editId.value = "";
+      startDate.value = todayISO();
+      endDate.value = addDuration(startDate.value, duration.value, durationUnit.value);
+      customServiceBox.classList.add("hidden");
+      formTitle.textContent = "إضافة شحن جديد";
+      saveBtn.textContent = "💾 حفظ";
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const selectedService = service.value === "أخرى" ? customService.value.trim() : service.value;
+      if (!selectedService) {
+        toast("اكتب اسم الخدمة");
+        return;
+      }
+
+      const data = {
+        id: editId.value || crypto.randomUUID(),
+        customerName: customerName.value.trim(),
+        phone: phone.value.trim(),
+        service: selectedService,
+        duration: duration.value,
+        durationUnit: durationUnit.value,
+        startDate: startDate.value,
+        endDate: endDate.value,
+        price: price.value,
+        currency: currency.value,
+        notes: notes.value.trim(),
+        createdAt: editId.value ? (records.find(r => r.id === editId.value)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!data.phone) {
+        toast("رقم الهاتف ضروري");
+        return;
+      }
+
+      if (editId.value) {
+        records = records.map(r => r.id === editId.value ? data : r);
+        toast("تم تعديل السجل");
+      } else {
+        records.push(data);
+        toast("تم حفظ الشحن");
+      }
+
+      saveRecords();
+      resetForm();
+      render();
+    });
+
+    window.editRecord = function(id) {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+
+      editId.value = r.id;
+      customerName.value = r.customerName || "";
+      phone.value = r.phone || "";
+
+      const known = Array.from(service.options).some(o => o.value === r.service);
+      service.value = known ? r.service : "أخرى";
+      customServiceBox.classList.toggle("hidden", known);
+      customService.value = known ? "" : r.service;
+
+      duration.value = r.duration || 1;
+      durationUnit.value = r.durationUnit || "months";
+      startDate.value = r.startDate;
+      endDate.value = r.endDate;
+      price.value = r.price || "";
+      currency.value = r.currency || "MRU";
+      notes.value = r.notes || "";
+
+      formTitle.textContent = "تعديل شحن";
+      saveBtn.textContent = "✅ حفظ التعديل";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    window.deleteRecord = function(id) {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+      if (confirm(`حذف سجل ${r.customerName || r.phone}؟`)) {
+        records = records.filter(x => x.id !== id);
+        saveRecords();
+        render();
+        toast("تم حذف السجل");
+      }
+    }
+
+    function download(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    $("exportJsonBtn").addEventListener("click", () => {
+      download("reem-charge-backup.json", JSON.stringify(records, null, 2), "application/json;charset=utf-8");
+    });
+
+    $("exportCsvBtn").addEventListener("click", () => {
+      const headers = ["اسم الزبون","الهاتف","الخدمة","البداية","النهاية","المدة","السعر","العملة","ملاحظات","الحالة"];
+      const rows = records.map(r => [
+        r.customerName, r.phone, r.service, r.startDate, r.endDate,
+        `${r.duration} ${r.durationUnit}`, r.price, r.currency, r.notes, getStatus(r).text
+      ]);
+      const csv = [headers, ...rows]
+        .map(row => row.map(v => `"${String(v || "").replaceAll('"','""')}"`).join(","))
+        .join("\n");
+      download("reem-charge-records.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+    });
+
+    $("importFile").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const imported = JSON.parse(await file.text());
+        if (!Array.isArray(imported)) throw new Error("invalid");
+        if (confirm("هل تريد استبدال البيانات الحالية بالنسخة المستوردة؟")) {
+          records = imported;
+          saveRecords();
+          render();
+          toast("تم استيراد البيانات");
+        }
+      } catch {
+        toast("ملف النسخة غير صحيح");
+      }
+      e.target.value = "";
+    });
+
+    $("clearAllBtn").addEventListener("click", () => {
+      if (records.length === 0) return;
+      if (confirm("هل تريد حذف كل السجلات؟ لا يمكن التراجع.")) {
+        records = [];
+        saveRecords();
+        render();
+        toast("تم حذف كل السجلات");
+      }
+    });
+
+    $("resetBtn").addEventListener("click", resetForm);
+
+    service.addEventListener("change", () => {
+      customServiceBox.classList.toggle("hidden", service.value !== "أخرى");
+    });
+
+    [duration, durationUnit, startDate].forEach(el => {
+      el.addEventListener("input", () => {
+        if (startDate.value && duration.value) {
+          endDate.value = addDuration(startDate.value, duration.value, durationUnit.value);
+        }
+      });
+    });
+
+    [searchInput, statusFilter, sortBy].forEach(el => el.addEventListener("input", render));
+
+    resetForm();
+    render();
+  </script>
+</body>
+</html>
