@@ -558,7 +558,7 @@
     function getStatus(record) {
       const left = daysLeft(record.endDate);
       if (left < 0) return { key: "expired", text: "منتهية", cls: "expired", icon: "⛔" };
-      if (left <= 3) return { key: "soon", text: "تنتهي قريباً", cls: "soon", icon: "⚠️" };
+      if (left <= 5) return { key: "soon", text: "تنتهي قريباً", cls: "soon", icon: "⚠️" };
       return { key: "active", text: "نشطة", cls: "active", icon: "✅" };
     }
 
